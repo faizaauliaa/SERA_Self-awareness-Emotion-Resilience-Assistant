@@ -1,4 +1,4 @@
-# 🌱🧸 SERA — Self-Awareness, Emotion, & Resilience Assistant
+# 🌱🧸 SERA: Self-Awareness, Emotion, & Resilience Assistant
 
 **SERA (Self-Awareness, Emotion, & Resilience Assistant)** adalah aplikasi mobile Android berbasis **Kotlin** dan **Jetpack Compose (Material 3)** yang dirancang untuk membantu mahasiswa memantau kondisi emosional harian, mengenali pola emosi yang berulang, merencanakan aktivitas perawatan diri (*self-care*) secara adaptif berdasarkan kondisi dan lokasi, mengevaluasi efektivitas aktivitas *self-care*, serta terhubung dengan lingkar dukungan tepercaya (*Support Circle*).
 
@@ -90,7 +90,7 @@ Voice Journal      • Grafik Tren Harian/Minggu   • Radar Lokasi GPS      •
 
 1. **Clone Repository**:
    ```bash
-   git clone https://github.com/USERNAME_GITHUB_ANINDHITA/NAMA_REPO.git
+   git clone https://github.com/faizaauliaa/SERA_Self-awareness-Emotion-Resilience-Assistant.git
    ```
 2. Buka **Android Studio**, pilih **Open**, lalu arahkan ke folder `SERA`.
 3. Tunggu proses **Gradle Sync** selesai (menggunakan **JDK 21**).
