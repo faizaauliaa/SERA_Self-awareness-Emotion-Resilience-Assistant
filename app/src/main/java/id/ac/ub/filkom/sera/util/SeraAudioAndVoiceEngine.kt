@@ -230,7 +230,7 @@ object SeraVoiceJournalEngine {
             try {
                 ttsInstance = TextToSpeech(context.applicationContext) { status ->
                     if (status == TextToSpeech.SUCCESS) {
-                        val res = ttsInstance?.setLanguage(Locale.forLanguageTag("id-ID"))
+                        val res = ttsInstance?.setLanguage(Locale("id", "ID"))
                         if (res == TextToSpeech.LANG_MISSING_DATA || res == TextToSpeech.LANG_NOT_SUPPORTED) {
                             ttsInstance?.setLanguage(Locale.US)
                         }
