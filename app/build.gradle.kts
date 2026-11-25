@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "id.ac.ub.filkom.sera"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "id.ac.ub.filkom.sera"
