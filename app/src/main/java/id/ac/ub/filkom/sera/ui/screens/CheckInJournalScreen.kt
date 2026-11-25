@@ -87,9 +87,8 @@ fun CheckInJournalScreen(
         mutableStateOf("“Ceritakan apa yang kamu rasakan, $userName... Aku di sini mendengarkanmu ✨”")
     }
 
-    // =========================================================================================
     // SENSOR 2: MICROPHONE — VOICE EMOTION JOURNAL STATE (REAL WAV RECORDER & PLAYER)
-    // =========================================================================================
+
     LaunchedEffect(Unit) {
         SeraVoiceJournalEngine.initTtsIfNeeded(context)
     }
@@ -742,9 +741,7 @@ fun CheckInJournalScreen(
                 HorizontalDivider(color = SeraDivider)
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // =========================================================================
                 // SENSOR 2: VOICE EMOTION JOURNAL (MIKROFON) WIDGET
-                // =========================================================================
                 Surface(
                     shape = RoundedCornerShape(26.dp),
                     color = SeraSurfaceSubtle,
