@@ -35,6 +35,7 @@ class SeraLocalStorage(context: Context) :
 
         // Preference Keys
         private const val KEY_INITIALIZED = "sqlite_seeded_v3"
+        private const val KEY_AUTH_REQUIRED_V4 = "auth_required_v4"
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_USER_NIM = "user_nim"
         private const val KEY_USER_EMAIL = "user_email"
@@ -128,6 +129,16 @@ class SeraLocalStorage(context: Context) :
             // Ensure WhatsApp contact numbers use +6281225905930 as requested
             enforceDefaultWhatsAppNumber()
         }
+        // Ensure default state requires user login first instead of auto-logging in as "Nur"
+        if (!prefs.getBoolean(KEY_AUTH_REQUIRED_V4, false)) {
+            val currentSavedName = prefs.getString(KEY_USER_NAME, "") ?: ""
+            val resetName = if (currentSavedName.equals("Nur", ignoreCase = true)) "" else currentSavedName
+            prefs.edit()
+                .putBoolean(KEY_AUTH_REQUIRED_V4, true)
+                .putBoolean(KEY_USER_LOGGED_IN, false)
+                .putString(KEY_USER_NAME, resetName)
+                .apply()
+        }
     }
 
     private fun enforceDefaultWhatsAppNumber() {
@@ -156,10 +167,11 @@ class SeraLocalStorage(context: Context) :
 
         prefs.edit()
             .putBoolean(KEY_INITIALIZED, true)
-            .putString(KEY_USER_NAME, "Nur")
-            .putString(KEY_USER_NIM, "245150207111081 • Teknik Informatika FILKOM UB")
-            .putString(KEY_USER_EMAIL, "nur@student.ub.ac.id")
-            .putBoolean(KEY_USER_LOGGED_IN, true)
+            .putBoolean(KEY_AUTH_REQUIRED_V4, true)
+            .putString(KEY_USER_NAME, "")
+            .putString(KEY_USER_NIM, "Mahasiswa • Teknik Informatika FILKOM UB")
+            .putString(KEY_USER_EMAIL, "")
+            .putBoolean(KEY_USER_LOGGED_IN, false)
             .putInt(KEY_STREAK_DAYS, 14)
             .putString(
                 KEY_NEXT_WEEK_COMMITMENT,
@@ -177,13 +189,13 @@ class SeraLocalStorage(context: Context) :
             .apply()
     }
 
-    fun getUserName(): String = prefs.getString(KEY_USER_NAME, "Nur") ?: "Nur"
+    fun getUserName(): String = prefs.getString(KEY_USER_NAME, "") ?: ""
 
     fun setUserProfile(name: String, nimOrRole: String, loggedIn: Boolean, photoUri: String? = null) {
-        val currentName = prefs.getString(KEY_USER_NAME, "Nur") ?: "Nur"
+        val currentName = prefs.getString(KEY_USER_NAME, "") ?: ""
         val currentNim =
-            prefs.getString(KEY_USER_NIM, "Mahasiswi Tingkat Akhir • TIF FILKOM UB")
-                ?: "Mahasiswi Tingkat Akhir • TIF FILKOM UB"
+            prefs.getString(KEY_USER_NIM, "Mahasiswa • TIF FILKOM UB")
+                ?: "Mahasiswa • TIF FILKOM UB"
         val currentPhoto = prefs.getString(KEY_USER_PHOTO_URI, null)
 
         prefs.edit()
@@ -195,8 +207,8 @@ class SeraLocalStorage(context: Context) :
     }
 
     fun getUserRoleSubtitle(): String =
-        prefs.getString(KEY_USER_NIM, "Mahasiswi Tingkat Akhir • TIF FILKOM UB")
-            ?: "Mahasiswi Tingkat Akhir • TIF FILKOM UB"
+        prefs.getString(KEY_USER_NIM, "Mahasiswa • TIF FILKOM UB")
+            ?: "Mahasiswa • TIF FILKOM UB"
 
     fun getUserPhotoUri(): String? =
         prefs.getString(KEY_USER_PHOTO_URI, null)?.takeIf { it.isNotBlank() }
@@ -205,7 +217,7 @@ class SeraLocalStorage(context: Context) :
         prefs.edit().putString(KEY_USER_PHOTO_URI, uri ?: "").apply()
     }
 
-    fun isUserLoggedIn(): Boolean = prefs.getBoolean(KEY_USER_LOGGED_IN, true)
+    fun isUserLoggedIn(): Boolean = prefs.getBoolean(KEY_USER_LOGGED_IN, false)
 
     fun getStreakDays(): Int = prefs.getInt(KEY_STREAK_DAYS, 14)
 
