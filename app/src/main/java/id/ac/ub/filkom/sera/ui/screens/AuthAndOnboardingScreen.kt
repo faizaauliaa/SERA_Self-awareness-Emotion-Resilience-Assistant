@@ -80,9 +80,9 @@ fun AuthAndOnboardingScreen(
                     .joinToString(" ") { part ->
                         part.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                     }
-                    .ifBlank { initialName.ifBlank { "Nur" } }
+                    .ifBlank { initialName.ifBlank { "Teman SERA" } }
                 showGoogleSignInDialog = false
-                onLoginSuccess(parsedName, "Mahasiswi Tingkat Akhir • Google ($email)")
+                onLoginSuccess(parsedName, "Mahasiswa • Google ($email)")
             } else {
                 showGoogleSignInDialog = true
             }
@@ -722,8 +722,9 @@ private fun SignInScreenContent(
     onOpenGoogleLogin: () -> Unit,
     onSignInSuccess: (name: String, subtitle: String) -> Unit
 ) {
-    var emailInput by remember { mutableStateOf("nur@student.ub.ac.id") }
-    var passwordInput by remember { mutableStateOf("seratenang2026") }
+    var emailInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
+    var loginErrorText by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -891,7 +892,13 @@ private fun SignInScreenContent(
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
                     value = emailInput,
-                    onValueChange = { emailInput = it },
+                    onValueChange = {
+                        emailInput = it
+                        loginErrorText = null
+                    },
+                    placeholder = {
+                        Text("Contoh: nama@student.ub.ac.id atau @gmail.com", fontSize = 12.sp)
+                    },
                     singleLine = true,
                     shape = RoundedCornerShape(20.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -915,7 +922,7 @@ private fun SignInScreenContent(
                         color = SeraTextPrimary
                     )
                     Text(
-                        text = "Min. 8 karakter",
+                        text = "Min. 6 karakter",
                         fontSize = 11.sp,
                         color = SeraTextSecondary
                     )
@@ -923,7 +930,13 @@ private fun SignInScreenContent(
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
                     value = passwordInput,
-                    onValueChange = { passwordInput = it },
+                    onValueChange = {
+                        passwordInput = it
+                        loginErrorText = null
+                    },
+                    placeholder = {
+                        Text("Masukkan kata sandi akunmu...", fontSize = 12.sp)
+                    },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     shape = RoundedCornerShape(20.dp),
@@ -936,14 +949,33 @@ private fun SignInScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                if (loginErrorText != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = loginErrorText!!,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFD9385E)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Button(
                     onClick = {
-                        val parsedName = emailInput.substringBefore("@")
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                            .ifBlank { initialName.ifBlank { "Nur" } }
-                        onSignInSuccess(parsedName, "Mahasiswi Tingkat Akhir • TIF FILKOM UB")
+                        if (emailInput.isBlank()) {
+                            loginErrorText = "Mohon isi alamat email atau nama pengguna terlebih dahulu."
+                        } else if (passwordInput.isBlank()) {
+                            loginErrorText = "Mohon isi kata sandi terlebih dahulu."
+                        } else {
+                            val parsedName = emailInput.substringBefore("@")
+                                .replace(".", " ")
+                                .split(" ")
+                                .joinToString(" ") { part ->
+                                    part.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                }
+                            onSignInSuccess(parsedName, "Mahasiswa • TIF FILKOM UB")
+                        }
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(containerColor = SeraPrimaryBlue),
@@ -1031,9 +1063,10 @@ private fun SignUpScreenContent(
     onOpenGoogleLogin: () -> Unit,
     onSignUpSuccess: (name: String, subtitle: String) -> Unit
 ) {
-    var nickname by remember { mutableStateOf(initialName.ifBlank { "Nur" }) }
-    var email by remember { mutableStateOf("nur@student.ub.ac.id") }
-    var password by remember { mutableStateOf("seratenang2026") }
+    var nickname by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var signUpErrorText by remember { mutableStateOf<String?>(null) }
     var selectedFocuses by remember {
         mutableStateOf(setOf("Atasi Cemas Kuliah", "Tidur Lebih Nyenyak"))
     }
@@ -1130,7 +1163,13 @@ private fun SignUpScreenContent(
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
             value = nickname,
-            onValueChange = { nickname = it },
+            onValueChange = {
+                nickname = it
+                signUpErrorText = null
+            },
+            placeholder = {
+                Text("Masukkan nama panggilanmu...", fontSize = 12.sp)
+            },
             singleLine = true,
             shape = RoundedCornerShape(50),
             colors = OutlinedTextFieldDefaults.colors(
@@ -1171,7 +1210,13 @@ private fun SignUpScreenContent(
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                signUpErrorText = null
+            },
+            placeholder = {
+                Text("Contoh: nama@student.ub.ac.id atau @gmail.com", fontSize = 12.sp)
+            },
             singleLine = true,
             shape = RoundedCornerShape(50),
             colors = OutlinedTextFieldDefaults.colors(
@@ -1193,8 +1238,15 @@ private fun SignUpScreenContent(
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                signUpErrorText = null
+            },
+            placeholder = {
+                Text("Buat kata sandi minimal 6 karakter...", fontSize = 12.sp)
+            },
             singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
             shape = RoundedCornerShape(50),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = SeraSurface,
@@ -1347,14 +1399,31 @@ private fun SignUpScreenContent(
             }
         }
 
+        if (signUpErrorText != null) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = signUpErrorText!!,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFD9385E)
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                onSignUpSuccess(
-                    nickname.ifBlank { "Nur" },
-                    "Mahasiswi Tingkat Akhir • TIF FILKOM UB"
-                )
+                val finalName = nickname.trim().ifBlank {
+                    email.substringBefore("@").trim()
+                }
+                if (finalName.isBlank()) {
+                    signUpErrorText = "Mohon isi nama panggilan atau alamat emailmu terlebih dahulu."
+                } else {
+                    onSignUpSuccess(
+                        finalName,
+                        "Mahasiswa • TIF FILKOM UB"
+                    )
+                }
             },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(containerColor = SeraPrimaryBlue),
@@ -1410,14 +1479,13 @@ fun GoogleSignInAccountSheetDialog(
     onGoogleAuthenticated: (name: String, subtitle: String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var customEmail by remember { mutableStateOf("nur@student.ub.ac.id") }
-    var customName by remember { mutableStateOf(initialName.ifBlank { "Nur" }) }
-    var customRole by remember { mutableStateOf("Mahasiswi Tingkat Akhir • TIF FILKOM UB") }
+    var customEmail by remember { mutableStateOf("") }
+    var customName by remember { mutableStateOf(initialName) }
+    var customRole by remember { mutableStateOf("Mahasiswa • TIF FILKOM UB") }
     var openRealGoogleWeb by remember { mutableStateOf(false) }
 
     val quickGoogleAccounts = remember {
         listOf(
-            Triple("Nur", "nur@student.ub.ac.id", "Mahasiswi Tingkat Akhir • TIF FILKOM UB"),
             Triple("Anindhita Faiza Aulia", "anindhita@student.ub.ac.id", "Mahasiswi TIF-E • FILKOM UB"),
             Triple("Shafa Rizwana Zarin", "shafarizwana@student.ub.ac.id", "Mahasiswi TIF-E • FILKOM UB"),
             Triple("Aisha Maryam", "aishamaryam@student.ub.ac.id", "Mahasiswi TIF-E • FILKOM UB"),
@@ -1608,9 +1676,9 @@ fun GoogleSignInAccountSheetDialog(
                         Button(
                             onClick = {
                                 val finalName = customName.ifBlank {
-                                    customEmail.substringBefore("@").ifBlank { "Nur" }
+                                    customEmail.substringBefore("@").ifBlank { "Mahasiswa SERA" }
                                 }
-                                val finalRole = customRole.ifBlank { "Mahasiswi Tingkat Akhir • TIF FILKOM UB" }
+                                val finalRole = customRole.ifBlank { "Mahasiswa • TIF FILKOM UB" }
                                 onGoogleAuthenticated(finalName, finalRole)
                             },
                             shape = RoundedCornerShape(50),
