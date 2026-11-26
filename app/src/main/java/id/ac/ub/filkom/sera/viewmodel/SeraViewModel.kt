@@ -25,10 +25,10 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 data class SeraUiState(
-    val userName: String = "Nur",
-    val userRoleSubtitle: String = "Mahasiswi Tingkat Akhir • TIF FILKOM UB",
+    val userName: String = "",
+    val userRoleSubtitle: String = "Mahasiswa • TIF FILKOM UB",
     val userPhotoUri: String? = null,
-    val isLoggedIn: Boolean = true,
+    val isLoggedIn: Boolean = false,
     val streakDays: Int = 14,
     val todayQuickEmotion: EmotionType = EmotionType.TENANG,
     val checkInHistory: List<EmotionCheckIn> = emptyList(),
